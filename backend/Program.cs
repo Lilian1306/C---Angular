@@ -3,7 +3,7 @@ using backend.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("TaskManagerDb"));
-builder.Services.AddScoped<backend.Repositories.ITaskTodo, backend.Repositories.TaskRepository>();
+builder.Services.AddScoped<backend.Repositories.ITaskTodo, backend.Repositories.TaskTodo>();
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
