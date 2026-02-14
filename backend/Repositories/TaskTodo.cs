@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories;
 
-public class TaskRepository : ITaskTodo
+public class TaskTodo : ITaskTodo
 {
     private readonly AppDbContext _context;
 
-    public TaskRepository(AppDbContext context)
+    public TaskTodo(AppDbContext context)
     {
         _context = context;
     }
