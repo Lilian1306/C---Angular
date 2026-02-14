@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace backend; 
-
-public class TaskItem
-{
+namespace backend.Models
+{ 
+    public class TaskItem
+    {
     [Key]
     public int Id { get; set; }
 
@@ -14,5 +14,11 @@ public class TaskItem
 
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-    public bool IsCompleted { get; set; } = false;
+    public bool IsCompleted { get; set; }
+
+    public TaskItem()
+    {
+        IsCompleted = false;
+    }
+    }
 }
