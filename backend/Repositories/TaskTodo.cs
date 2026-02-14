@@ -13,35 +13,40 @@ public class TaskTodo : ITaskTodo
         _context = context;
     }
 
-    public async Task<IEnumerable<TaskItem>> GetAllAsync() 
+    public async Task<IEnumerable<TaskItem>> GetAllTasksAsync() 
     {
         return await _context.Tasks.ToListAsync();
     }
 
-    public async Task<TaskItem?> GetByIdAsync(int id) 
+    public async Task<TaskItem?> GetTaskByIdAsync(int id) 
     {
         return await _context.Tasks.FindAsync(id);
     }
 
-    public async Task AddAsync(TaskItem task) 
+    public async Task AddTaskAsync(TaskItem task) 
     {
         await _context.Tasks.AddAsync(task);
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(TaskItem task) 
+    public async Task<bool> UpdateTaskCompletionAsync(int id) 
     {
-        _context.Tasks.Update(task);
+        var task = await _context.Tasks.FindAsync(id);
+        if (task == null) return false;
+
+        task.IsCompleted = true; 
         await _context.SaveChangesAsync();
+        return true;
     }
 
-    public async Task DeleteAsync(int id) 
+    public async Task<bool> DeleteTaskAsync(int id) 
     {
-        var task = await GetByIdAsync(id);
-        if (task != null)
-        {
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
-        }
+        var task = await _context.Tasks.FindAsync(id);
+        if (task == null) return false;
+        
+         _context.Tasks.Remove(task);
+        await _context.SaveChangesAsync();
+        return true;
+        
     }
 }
