@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend; 
 
-public class TaskItems
+public class TaskItem
 {
     [Key]
     public int Id { get; set; }

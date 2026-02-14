@@ -8,21 +8,21 @@ namespace backend.Controllers;
 [Route("api/[controller]")]
 public class TasksController : ControllerBase
 {
-    private readonly ITaskRepository _repository;
+    private readonly ITaskTodo _repository;
 
-    public TasksController(ITaskRepository repository)
+    public TasksController(ITaskTodo repository)
     {
         _repository = repository;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskItems>>> GetTasks()
+    public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
     {
         return Ok(await _repository.GetAllAsync());
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<TaskItems>> GetTask(int id)
+    public async Task<ActionResult<TaskItem>> GetTask(int id)
     {
         var task = await _repository.GetByIdAsync(id);
         if (task == null) return NotFound();
@@ -30,7 +30,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<TaskItems>> CreateTask(TaskItems task)
+    public async Task<ActionResult<TaskItem>> CreateTask(TaskItem task)
     {
         if(string.IsNullOrWhiteSpace(task.Title))
         {
