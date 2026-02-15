@@ -11,7 +11,7 @@ export interface Task {
 }
 
 @Injectable({ providedIn: 'root', })
-export class Task {
+export class TaskService {
   private apiUrl = 'http://localhost:5038/api/tasks';
 
   constructor(private http: HttpClient) {}
