@@ -1,24 +1,4 @@
-<div class="container">
-  <h2>Lista de Tareas</h2>
+<div class="mt-8">
 
-  <div *ngIf="tasks.length === 0">Cargando tareas o lista vacía...</div>
 
-  <div *ngFor="let t of tasks" class="task-card">
-    <div class="task-header">
-      <input 
-        type="checkbox" 
-        [checked]="t.isCompleted"
-        (change)="toggleComplete(t)"
-         >
-      
-      <span [class.completed]="t.isCompleted">
-        <strong>{{ t.title }}</strong>
-      </span>
-    </div>
-
-    <div class="task-body">
-      <p *ngIf="t.description">{{ t.description }}</p>
-      <small>Creado: {{ t.createdAt | date:'short' }}</small>
-    </div>
-  </div>
 </div>

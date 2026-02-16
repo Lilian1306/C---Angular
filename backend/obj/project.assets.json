@@ -616,11 +616,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\lilyt\\Desktop\\project\\backend\\backend.csproj",
+      "projectUniqueName": "C:\\Users\\lilyt\\Desktop\\C---Angular\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "C:\\Users\\lilyt\\Desktop\\project\\backend\\backend.csproj",
+      "projectPath": "C:\\Users\\lilyt\\Desktop\\C---Angular\\backend\\backend.csproj",
       "packagesPath": "C:\\Users\\lilyt\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\lilyt\\Desktop\\project\\backend\\obj\\",
+      "outputPath": "C:\\Users\\lilyt\\Desktop\\C---Angular\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\lilyt\\AppData\\Roaming\\NuGet\\NuGet.Config"
