@@ -1,1 +1,73 @@
-<p>task-list works!</p>
+<div class="mx-auto max-w-6xl p-4">
+  <app-task-form
+    [editingTask]="editingTask"
+    (taskCreated)="loadTasks()"
+    (taskUpdated)="onTaskUpdated()"
+    (editCancelled)="cancelEdit()">
+  </app-task-form>
+
+  <h2 class="mb-4 text-xl font-semibold text-slate-800">Task List</h2>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="rounded-lg bg-white px-6 py-8 text-center text-sm text-slate-600 shadow">
+    <p>Loading tasks...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="rounded-lg border border-rose-200 bg-rose-50 px-6 py-6 text-center text-sm text-rose-700">
+    <p>{{ error }}</p>
+    <button
+      (click)="loadTasks()"
+      class="mt-3 rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-600">
+      Retry
+    </button>
+  </div>
+
+  <!-- Tasks Table -->
+  <div *ngIf="!loading && !error" class="overflow-x-auto">
+    <div *ngIf="tasks.length === 0" class="rounded-lg bg-white px-6 py-8 text-center text-sm text-slate-600 shadow">
+      <p>No tasks found. Create your first task!</p>
+    </div>
+
+    <table *ngIf="tasks.length > 0" class="min-w-full overflow-hidden rounded-lg bg-white shadow">
+      <thead class="bg-purple-600 text-white">
+        <tr>
+          <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Done</th>
+          <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Title</th>
+          <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Description</th>
+          <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Created</th>
+          <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks" class="border-b border-slate-100 text-sm text-slate-700 hover:bg-slate-50" [class.opacity-60]="task.isCompleted">
+          <td class="px-3 py-3">
+            <input
+              type="checkbox"
+              [checked]="task.isCompleted"
+              (change)="toggleTaskCompletion(task)"
+              class="h-4 w-4 cursor-pointer accent-emerald-500">
+          </td>
+          <td class="px-3 py-3 font-semibold text-slate-900" [class.line-through]="task.isCompleted">
+            {{ task.title }}
+          </td>
+          <td class="px-3 py-3 max-w-xs truncate text-slate-600" [title]="task.description || ''">
+            {{ task.description || 'No description' }}
+          </td>
+          <td class="px-3 py-3 text-xs text-slate-500">{{ formatDate(task.createdDate) }}</td>
+          <td class="px-3 py-3">
+            <div class="flex items-center gap-2">
+
+              <button
+                class="rounded-md  p-2 text-white shadow transition hover:bg-rose-600"
+                (click)="deleteTask(task)"
+                title="Delete task">
+    
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

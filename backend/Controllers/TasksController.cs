@@ -8,23 +8,25 @@ namespace backend.Controllers;
 [Route("api/[controller]")]
 public class TasksController : ControllerBase
 {
-    private readonly ITaskTodo _repository;
+    private readonly ITaskTodo _taskTodo;
+    private readonly ILogger<TasksController> _logger;
 
-    public TasksController(ITaskTodo repository)
+    public TasksController(ITaskTodo taskRepository, ILogger<TasksController> logger)
     {
-        _repository = repository;
+        _taskTodo = taskRepository;
+        _logger = logger;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
     {
-        return Ok(await _repository.GetAllTasksAsync());
+        return Ok(await _taskTodo.GetAllTasksAsync());
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<TaskItem>> GetTask(int id)
     {
-        var task = await _repository.GetTaskByIdAsync(id);
+        var task = await _taskTodo.GetTaskByIdAsync(id);
         if (task == null) return NotFound();
         return Ok(task);
     }
@@ -37,28 +39,39 @@ public class TasksController : ControllerBase
             return BadRequest("Title is required");
         }
 
-        await _repository.AddTaskAsync(task);
-        return CreatedAtAction(nameof(GetTasks) , new {id = task.Id}, task);
+        await _taskTodo.AddTaskAsync(task);
+        return CreatedAtAction(nameof(GetTask) , new {id = task.Id}, task);
     }
 
-    [HttpPut("{id}/complete")]
-    public async Task<IActionResult> CompleteTask(int id)
+  [HttpPut("{id}/complete")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> MarkTaskAsComplete(int id)
     {
-        bool wasUpdated = await _repository.UpdateTaskCompletionAsync(id);
-
-        if(!wasUpdated)
+        try
         {
-            return NotFound();
+            var success = await _taskTodo.MarkTaskAsCompleteAsync(id);
+
+            if (!success)
+            {
+                return NotFound(new { message = $"Task with ID {id} not found" });
+            }
+
+            return NoContent();
         }
-        return NoContent();
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error marking task {TaskId} as complete", id);
+            return StatusCode(500, "An error occurred while updating the task");
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTask(int id)
     {
-        bool wasUpdated = await _repository.DeleteTaskAsync(id);
+        bool success = await _taskTodo.DeleteTaskAsync(id);
 
-        if(!wasUpdated)
+        if(!success)
         {
             return NotFound();
         }
