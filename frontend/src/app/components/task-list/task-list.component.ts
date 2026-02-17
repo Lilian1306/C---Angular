@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.model';
@@ -9,7 +9,8 @@ import { TaskFormComponent } from '../task-form/task-form.component';
   standalone: true,
   imports: [CommonModule, TaskFormComponent],
   templateUrl: './task-list.component.html',
-  styleUrls: ['./task-list.component.css']
+  styleUrls: ['./task-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
@@ -17,7 +18,7 @@ export class TaskListComponent implements OnInit {
   error: string | null = null;
   editingTask: Task | null = null;
 
-  constructor(private taskService: TaskService) { }
+  constructor(private taskService: TaskService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -28,16 +29,26 @@ export class TaskListComponent implements OnInit {
   loadTasks(): void {
     this.loading = true;
     this.error = null;
+    console.log('starting to load task...')
 
     this.taskService.getTasks().subscribe({
       next: (data) => {
+        console.log('Tasks received from API:', data);
         this.tasks = data;
+        console.log('Tasks assigned to component:', this.tasks);
         this.loading = false;
+        this.cdr.markForCheck();
+        console.log('Loading set to false');
       },
       error: (err) => {
+        console.error('Full error object:', err);
         this.error = 'Failed to load tasks. Please make sure the backend is running.';
         this.loading = false;
+        this.cdr.markForCheck();
         console.error('Error loading tasks:', err);
+      },
+      complete: () => {
+        console.log('observable completed')
       }
     });
   }
@@ -54,34 +65,28 @@ export class TaskListComponent implements OnInit {
   }
 
   toggleTaskCompletion(task: Task): void {
-    if (task.isCompleted) {
+    const newCompletedStatus = !task.isCompleted;
+    
+    const updatedTask: Task = {
+      id: task.id,
+      title: task.title,
+      description: task.description || '',
+      isCompleted: newCompletedStatus,
+      createdDate: task.createdDate
+    };
 
-      const updatedTask = {
-        title: task.title,
-        description: task.description,
-        isCompleted: false
-      };
-
-      this.taskService.updateTask(task.id, updatedTask).subscribe({
-        next: () => {
-          task.isCompleted = false;
-        },
-        error: (err) => {
-          console.error('Error toggling task completion:', err);
-          alert('Failed to update task status. Please try again.');
-        }
-      });
-    } else {
-      this.taskService.markTaskAsComplete(task.id).subscribe({
-        next: () => {
-          task.isCompleted = true;
-        },
-        error: (err) => {
-          console.error('Error marking task as complete:', err);
-          alert('Failed to mark task as complete. Please try again.');
-        }
-      });
-    }
+    this.taskService.updateTask(task.id, updatedTask).subscribe({
+      next: (returnedTask) => {
+        task.isCompleted = returnedTask.isCompleted;
+        this.cdr.markForCheck();
+        console.log(`Task "${task.title}" marked as ${newCompletedStatus ? 'completed' : 'not completed'}`);
+      },
+      error: (err) => {
+        console.error('Error updating task completion:', err);
+        this.cdr.markForCheck();
+        alert('Failed to update task status. Please try again.');
+      }
+    });
   }
 
   // Delete a task
