@@ -102,12 +102,13 @@ export class TaskFormComponent implements OnChanges {
         next: () => {
           this.successMessage = 'Task updated successfully!';
           this.resetForm();
+          this.showForm = false;
+          this.isEditMode = false;
+          this.isSubmitting = false;
           this.taskUpdated.emit();
 
           setTimeout(() => {
             this.successMessage = null;
-            this.showForm = false;
-            this.isEditMode = false;
           }, 2000);
         },
         error: (err) => {
@@ -127,11 +128,12 @@ export class TaskFormComponent implements OnChanges {
         next: () => {
           this.successMessage = 'Task created successfully!';
           this.resetForm();
+          this.showForm = false;
+          this.isSubmitting = false;
           this.taskCreated.emit();
 
           setTimeout(() => {
             this.successMessage = null;
-            this.showForm = false;
           }, 2000);
         },
         error: (err) => {

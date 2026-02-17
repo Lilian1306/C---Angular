@@ -1,7 +1,7 @@
 <div class="mb-6">
   <button
     type="button"
-    class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-purple-700 text-sm font-bold shadow transition hover:shadow-md bg-gray-200"
+    class="inline-flex items-center gap-2  rounded-lg px-4 py-2 text-purple-700 text-sm font-bold shadow transition hover:shadow-md bg-gray-200"
     [ngClass]="isEditMode ? 'from-amber-400 to-orange-500' : (showForm ? 'from-rose-500 to-red-600' : 'from-indigo-500 to-purple-500')"
     (click)="toggleForm()">
     <span *ngIf="!showForm && !isEditMode" >Create New Task</span>

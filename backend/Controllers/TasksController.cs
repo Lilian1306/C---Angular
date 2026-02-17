@@ -43,6 +43,40 @@ public class TasksController : ControllerBase
         return CreatedAtAction(nameof(GetTask) , new {id = task.Id}, task);
     }
 
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<TaskItem>> UpdateTask(int id, TaskItem task)
+    {
+        if (id != task.Id)
+        {
+            return BadRequest("Task ID mismatch");
+        }
+
+        if (string.IsNullOrWhiteSpace(task.Title))
+        {
+            return BadRequest("Title is required");
+        }
+
+        try
+        {
+            var updatedTask = await _taskTodo.UpdateTaskCompletionAsync(task);
+
+            if (updatedTask == null)
+            {
+                return NotFound(new { message = $"Task with ID {id} not found" });
+            }
+
+            return Ok(updatedTask);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating task {TaskId}", id);
+            return StatusCode(500, "An error occurred while updating the task");
+        }
+    }
+
   [HttpPut("{id}/complete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
