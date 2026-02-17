@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.model';
 import { TaskFormComponent } from '../task-form/task-form.component';
+import { LucideAngularModule, SquarePen, Trash2} from 'lucide-angular';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, TaskFormComponent],
+  imports: [CommonModule, TaskFormComponent, LucideAngularModule],
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -17,6 +18,9 @@ export class TaskListComponent implements OnInit {
   loading: boolean = true;
   error: string | null = null;
   editingTask: Task | null = null;
+
+  readonly SquarePen = SquarePen;
+  readonly Trash2 = Trash2;
 
   constructor(private taskService: TaskService, private cdr: ChangeDetectorRef) { }
 
@@ -29,16 +33,12 @@ export class TaskListComponent implements OnInit {
   loadTasks(): void {
     this.loading = true;
     this.error = null;
-    console.log('starting to load task...')
 
     this.taskService.getTasks().subscribe({
       next: (data) => {
-        console.log('Tasks received from API:', data);
         this.tasks = data;
-        console.log('Tasks assigned to component:', this.tasks);
         this.loading = false;
         this.cdr.markForCheck();
-        console.log('Loading set to false');
       },
       error: (err) => {
         console.error('Full error object:', err);
@@ -47,9 +47,6 @@ export class TaskListComponent implements OnInit {
         this.cdr.markForCheck();
         console.error('Error loading tasks:', err);
       },
-      complete: () => {
-        console.log('observable completed')
-      }
     });
   }
 
