@@ -4,6 +4,7 @@ import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.model';
 import { TaskFormComponent } from '../task-form/task-form.component';
 import { LucideAngularModule, SquarePen, Trash2} from 'lucide-angular';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-task-list',
@@ -16,13 +17,16 @@ import { LucideAngularModule, SquarePen, Trash2} from 'lucide-angular';
 export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
   loading: boolean = true;
-  error: string | null = null;
   editingTask: Task | null = null;
 
   readonly SquarePen = SquarePen;
   readonly Trash2 = Trash2;
 
-  constructor(private taskService: TaskService, private cdr: ChangeDetectorRef) { }
+  constructor(
+    private taskService: TaskService, 
+    private cdr: ChangeDetectorRef, 
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -32,7 +36,6 @@ export class TaskListComponent implements OnInit {
 
   loadTasks(): void {
     this.loading = true;
-    this.error = null;
 
     this.taskService.getTasks().subscribe({
       next: (data) => {
@@ -42,7 +45,7 @@ export class TaskListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Full error object:', err);
-        this.error = 'Failed to load tasks. Please make sure the backend is running.';
+        this.toastr.error('Failed to load tasks. Please make sure the backend is running.', 'Error');
         this.loading = false;
         this.cdr.markForCheck();
         console.error('Error loading tasks:', err);
@@ -93,6 +96,8 @@ export class TaskListComponent implements OnInit {
 
         next: () => {
           this.loadTasks(); 
+          this.toastr.success(`"${task.title}" deleted successfully!`, 'Task Deleted'); 
+          
         },
         error: (err) => {
           console.error('Error deleting task:', err);

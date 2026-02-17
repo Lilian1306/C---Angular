@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TaskService } from '../../services/task.service';
 import { CreateTaskTD, Task } from '../../models/task.model';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -21,13 +22,12 @@ export class TaskFormComponent implements OnChanges {
   taskForm: FormGroup;
   isSubmitting = false;
   showForm = false;
-  errorMessage: string | null = null;
-  successMessage: string | null = null;
   isEditMode = false;
 
   constructor(
     private fb: FormBuilder,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private toastr: ToastrService
   ) {
     this.taskForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -85,14 +85,12 @@ export class TaskFormComponent implements OnChanges {
     }
 
     this.isSubmitting = true;
-    this.errorMessage = null;
-    this.successMessage = null;
 
     const formValue = this.taskForm.value;
 
     if (this.isEditMode && this.editingTask) {
-      // Update existing task
       const updatedTask = {
+        id: this.editingTask.id,
         title: formValue.title,
         description: formValue.description || '',
         isCompleted: this.editingTask.isCompleted
@@ -100,19 +98,15 @@ export class TaskFormComponent implements OnChanges {
 
       this.taskService.updateTask(this.editingTask.id, updatedTask).subscribe({
         next: () => {
-          this.successMessage = 'Task updated successfully!';
+          this.toastr.success('Task Updated Sucessfully!', 'success')
           this.resetForm();
           this.showForm = false;
           this.isEditMode = false;
           this.isSubmitting = false;
           this.taskUpdated.emit();
-
-          setTimeout(() => {
-            this.successMessage = null;
-          }, 2000);
         },
         error: (err) => {
-          this.errorMessage = 'Failed to update task. Please try again.';
+          this.toastr.error('Failed to update task. Please try again.', 'Error') ;
           this.isSubmitting = false;
           console.error('Error updating task:', err);
         }
@@ -126,18 +120,14 @@ export class TaskFormComponent implements OnChanges {
 
       this.taskService.createTask(newTask).subscribe({
         next: () => {
-          this.successMessage = 'Task created successfully!';
+          this.toastr.success('Task created successfully!', 'Success') ;
           this.resetForm();
           this.showForm = false;
           this.isSubmitting = false;
           this.taskCreated.emit();
-
-          setTimeout(() => {
-            this.successMessage = null;
-          }, 2000);
         },
         error: (err) => {
-          this.errorMessage = 'Failed to create task. Please try again.';
+          this.toastr.error('Failed to create task. Please try again.', 'Error');
           this.isSubmitting = false;
           console.error('Error creating task:', err);
         }
@@ -148,7 +138,6 @@ export class TaskFormComponent implements OnChanges {
   resetForm(): void {
     this.taskForm.reset();
     this.isSubmitting = false;
-    this.errorMessage = null;
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {

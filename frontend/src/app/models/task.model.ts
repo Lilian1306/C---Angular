@@ -12,6 +12,7 @@ export interface CreateTaskTD {
 }
 
 export interface UpdateTaskTD {
+  id: number;
   title: string;
   description?: string;
   isCompleted: boolean;
