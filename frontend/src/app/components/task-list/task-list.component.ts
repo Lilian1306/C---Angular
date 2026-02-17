@@ -79,7 +79,7 @@ export class TaskListComponent implements OnInit {
       next: (returnedTask) => {
         task.isCompleted = returnedTask.isCompleted;
         this.cdr.markForCheck();
-        console.log(`Task "${task.title}" marked as ${newCompletedStatus ? 'completed' : 'not completed'}`);
+        this.toastr.success(`Task "${task.title}" marked as ${newCompletedStatus ? 'completed' : 'NOT COMPLETED'}`);
       },
       error: (err) => {
         console.error('Error updating task completion:', err);
