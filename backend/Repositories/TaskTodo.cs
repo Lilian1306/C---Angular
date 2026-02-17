@@ -29,14 +29,20 @@ public class TaskTodo : ITaskTodo
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> UpdateTaskCompletionAsync(int id) 
+    public async Task<TaskItem?> UpdateTaskCompletionAsync(TaskItem task) 
     {
-        var task = await _context.Tasks.FindAsync(id);
-        if (task == null) return false;
+        var existingTask = await _context.Tasks.FindAsync(task.Id);
+        if (existingTask == null)
+        {
+            return null;
+        }
 
-        task.IsCompleted = true; 
+        existingTask.Title = task.Title;
+        existingTask.Description = task.Description;
+        existingTask.IsCompleted = task.IsCompleted;
+
         await _context.SaveChangesAsync();
-        return true;
+        return existingTask;
     }
 
     public async Task<bool> DeleteTaskAsync(int id) 
@@ -48,5 +54,18 @@ public class TaskTodo : ITaskTodo
         await _context.SaveChangesAsync();
         return true;
         
+    }
+
+    public async Task<bool> MarkTaskAsCompleteAsync(int id)
+    {
+        var task = await _context.Tasks.FindAsync(id);
+        if (task == null)
+        {
+            return false;
+        }
+
+        task.IsCompleted = true;
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
