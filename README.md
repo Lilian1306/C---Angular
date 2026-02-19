@@ -19,8 +19,7 @@ A full-stack task management application that allows users to create, view, togg
 
 Since the repository excludes build files and dependencies (via `.gitignore`), follow these steps to set up your local environment:
 
-### 1. Clone the Repository
-```bash
+### Clone the Repository
 git clone 
 cd your-repo
 
@@ -33,3 +32,17 @@ Run the API:  dotnet run
 Navigate to the frontend folder: cd frontend.
 Install the required npm packages: npm install
 Start the development server: ng serve
+
+📋 Features
+Task Visualization: Dynamic list that consumes data from the C# API.
+
+Task Creation: Form with validation and success/error notifications using ngx-toastr.
+
+Completion Toggle: Update task status (Completed/Incomplete) with immediate visual feedback.
+
+Task Deletion: Remove records from the database with a confirmation dialog.
+
+📂 Project Structure
+/frontend: Angular project files (Components, Services, Models).
+
+/backend: C# API project (Controllers, Repositories, Data Context).
