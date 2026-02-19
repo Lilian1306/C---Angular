@@ -24,14 +24,14 @@ git clone
 cd your-repo
 
 ### Configure the Backend (.NET)
-Navigate to the backend folder: cd backend.
-Restore dependencies and build the project: dotnet build
-Run the API:  dotnet run
+* **Navigate to the backend folder: cd backend.
+* **Restore dependencies and build the project: dotnet build
+* **Run the API:  dotnet run
 
 ### Configure the Frontend (Angular)
-Navigate to the frontend folder: cd frontend.
-Install the required npm packages: npm install
-Start the development server: ng serve
+* **Navigate to the frontend folder: cd frontend.
+* **Install the required npm packages: npm install
+* **Start the development server: ng serve
 
 📋 Features
 Task Visualization: Dynamic list that consumes data from the C# API.
