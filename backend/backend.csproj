@@ -12,4 +12,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\experts-encryption\src\ExpertsEncryption.Sdk\ExpertsEncryption.Sdk.csproj" />
+  </ItemGroup>
+
 </Project>
