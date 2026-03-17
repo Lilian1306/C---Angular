@@ -20,7 +20,9 @@ public class TasksController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
     {
-        return Ok(await _taskTodo.GetAllTasksAsync());
+        // El repositorio devolverá los títulos ya descifrados para Angular
+        var tasks = await _taskTodo.GetAllTasksAsync();
+        return Ok(tasks);
     }
 
     [HttpGet("{id}")]
@@ -32,35 +34,31 @@ public class TasksController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<TaskItem>> AddTaskAsync(TaskItem task)
+    public async Task<ActionResult<TaskItem>> AddTask(TaskItem task)
     {
         if(string.IsNullOrWhiteSpace(task.Title))
         {
             return BadRequest("Title is required");
         }
 
+        // El repositorio se encargará de cifrar el título antes de guardar
         await _taskTodo.AddTaskAsync(task);
-        return CreatedAtAction(nameof(GetTask) , new {id = task.Id}, task);
+        
+        // Importante: devolvemos el objeto tal cual, pero el cliente (Angular) 
+        // recibirá el objeto con el ID generado.
+        return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<TaskItem>> UpdateTask(int id, TaskItem task)
     {
-        if (id != task.Id)
-        {
-            return BadRequest("Task ID mismatch");
-        }
-
-        if (string.IsNullOrWhiteSpace(task.Title))
-        {
-            return BadRequest("Title is required");
-        }
+        if (id != task.Id) return BadRequest("Task ID mismatch");
+        if (string.IsNullOrWhiteSpace(task.Title)) return BadRequest("Title is required");
 
         try
         {
+            // El repositorio detecta si el título viene en plano para cifrarlo
+            // o si ya está cifrado para mantenerlo así en la BD.
             var updatedTask = await _taskTodo.UpdateTaskCompletionAsync(task);
 
             if (updatedTask == null)
@@ -68,7 +66,7 @@ public class TasksController : ControllerBase
                 return NotFound(new { message = $"Task with ID {id} not found" });
             }
 
-            return Ok(updatedTask);
+            return Ok(updatedTask); // Devolvemos la tarea descifrada
         }
         catch (Exception ex)
         {
@@ -77,26 +75,20 @@ public class TasksController : ControllerBase
         }
     }
 
-  [HttpPut("{id}/complete")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [HttpPut("{id}/complete")]
     public async Task<IActionResult> MarkTaskAsComplete(int id)
     {
         try
         {
             var success = await _taskTodo.MarkTaskAsCompleteAsync(id);
-
-            if (!success)
-            {
-                return NotFound(new { message = $"Task with ID {id} not found" });
-            }
+            if (!success) return NotFound(new { message = $"Task with ID {id} not found" });
 
             return NoContent();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error marking task {TaskId} as complete", id);
-            return StatusCode(500, "An error occurred while updating the task");
+            return StatusCode(500, "Error updating task status");
         }
     }
 
@@ -104,13 +96,8 @@ public class TasksController : ControllerBase
     public async Task<IActionResult> DeleteTask(int id)
     {
         bool success = await _taskTodo.DeleteTaskAsync(id);
-
-        if(!success)
-        {
-            return NotFound();
-        }
+        if(!success) return NotFound();
 
         return NoContent();
     }
 }
-
