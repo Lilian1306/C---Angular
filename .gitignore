@@ -13,3 +13,7 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# Configuración de ASP.NET Core
+**/appsettings.json
+**/appsettings.Development.json
