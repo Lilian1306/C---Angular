@@ -10,10 +10,11 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.2" />
+    <PackageReference Include="expertsencryption.sdk" Version="1.0.8" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\experts-encryption\src\ExpertsEncryption.Sdk\ExpertsEncryption.Sdk.csproj" />
+     
   </ItemGroup>
 
 </Project>
