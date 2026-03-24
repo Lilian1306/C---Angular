@@ -55,10 +55,14 @@ public class TaskTodo : ITaskTodo
 
     public async Task AddTaskAsync(TaskItem task) 
     {
+        Console.WriteLine($"--- CIFRANDO DATO ---");
+        Console.WriteLine($"Texto original: {task.Title}");
         // CIFRAR: Protegemos el título antes de que toque la base de datos
         if (!_encryptionService.IsEncrypted(task.Title))
         {
             task.Title = await _encryptionService.EncryptAsync(task.Title, GetContext("TaskTitle"));
+
+            Console.WriteLine($"Texto cifrado (a guardar en DB): {task.Title}");
         }
 
         await _context.Tasks.AddAsync(task);
